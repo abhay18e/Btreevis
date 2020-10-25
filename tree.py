@@ -5,29 +5,19 @@ class tree():
         self.right = right
         self.level = 1
 
-    def insertL(self, data, parentNode=None, left=None, right=None):
+    def insertL(self, data, left=None, right=None):
         newNode = tree(data, left, right)
 
-        if parentNode == None:
-            self.left = newNode
-            self.left.level = self.level + 1
-            return self.left
-        else:
-            parentNode.left = newNode
-            parent.left.level = self.level + 1
-            return parent.left
+        self.left = newNode
+        self.left.level = self.level + 1
+        return self.left
 
-    def insertR(self, data, parentNode=None, left=None, right=None):
+    def insertR(self, data, left=None, right=None):
         newNode = tree(data, left, right)
-        if parentNode == None:
-            self.right = newNode
-            self.right.level = self.level + 1
-            return self.right
 
-        else:
-            parentNode.right = newNode
-            parent.right.level = self.level + 1
-            return parent.right
+        self.right = newNode
+        self.right.level = self.level + 1
+        return self.right
 
     def showTree(self, currentNode=None):
         if currentNode == None:
@@ -46,20 +36,20 @@ class tree():
         print(") ", end="")
 
 
-parent = None  # createNodeTree functon creates a tree and assign its value to parent
+root = None  # createNodeTree functon creates a tree and assign its value to root
 
 
-def createNodeTree(value, _parent=None):
-    global parent
-    if _parent == None:
-        _parent = tree(value)
-        parent = _parent
+def createNodeTree(value, _root=None):
+    global root
+    if _root == None:
+        _root = tree(value)
+        root = _root
 
     newValue = value // 2
 
     if newValue >= 1:
-        tl = _parent.insertL(newValue)
-        tr = _parent.insertR(newValue)
+        tl = _root.insertL(newValue)
+        tr = _root.insertR(newValue)
         createNodeTree(newValue, tl)
         createNodeTree(newValue, tr)
     else:
@@ -80,13 +70,13 @@ def setHeight(tree):
         return
 
 
-createNodeTree(20)
-# parent.right.right.right.right.insertL(45)
-setHeight(parent)
+createNodeTree(8)
+#root.right.right.right.right.insertL(45)
+setHeight(root)
 
 width = 2**(height-1)
 
-'''
-parent.showTree()
+'''  
+root.showTree()
 print("\n------Height : ", height, "\n-------Width : ", width)
 '''
