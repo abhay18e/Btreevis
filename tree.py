@@ -3,13 +3,16 @@ class tree():
         self.data = data
         self.left = left
         self.right = right
-        self.level = 1
+        self.level = 0
+        self.preorder = 1
+        self.loc = {"x": 0, "y": 0}
 
     def insertL(self, data, left=None, right=None):
         newNode = tree(data, left, right)
 
         self.left = newNode
         self.left.level = self.level + 1
+        self.left.preorder = self.preorder * 2
         return self.left
 
     def insertR(self, data, left=None, right=None):
@@ -17,6 +20,7 @@ class tree():
 
         self.right = newNode
         self.right.level = self.level + 1
+        self.right.preorder = self.preorder * 2 + 1
         return self.right
 
     def showTree(self, currentNode=None):
@@ -28,7 +32,7 @@ class tree():
         if currentNode.left != None:
             self.showTree(currentNode.left)
 
-        print(str(currentNode.data)+"", end="")
+        print(str(currentNode.data+currentNode.loc["x"])+"", end="")
 
         if currentNode.right != None:
             self.showTree(currentNode.right)
@@ -70,8 +74,8 @@ def setHeight(tree):
         return
 
 
-createNodeTree(8)
-#root.right.right.right.right.insertL(45)
+createNodeTree(18)
+# root.right.right.right.right.insertL(45)
 setHeight(root)
 
 width = 2**(height-1)

@@ -1,50 +1,81 @@
 from tkinter import Canvas
 from tree import root, height, width
 
-# root.showTree()
-radius = 10
-node_verticle_distance = 30
-node_horizontal_distance = radius*2
-
-print(height, width)
-
+radius = 20
+no_of_node = width
+dis_btw_node = 25
+node_verticle_distance = 25
+width_px = no_of_node*2*radius + (no_of_node+1)*dis_btw_node
 height_px = 2*radius + (height-1)*(radius*2 + node_verticle_distance)
-width_px = 2*radius + (width-1)*(radius*2 + node_horizontal_distance)
 print(height_px, width_px)
-#creating canvas
-canvas = Canvas(height=height_px, width=width_px, bg="red")
-canvas.pack()
-    
 
-def drawCircle(x, y, r):
+# creating canvas
+canvas_bg_color = "red"
+node_fill_color = "white"
+canvas = Canvas(height=height_px, width=width_px, bg=canvas_bg_color)
+canvas.pack()
+
+
+def linspace(start, end, n):
+    gap = end-start
+    step = gap//(n+1)
+    arr = []
+    temp = start
+    # print(step)
+    for i in range(0, n):
+        temp += step
+        arr.append(temp)
+    #print(n, "-->", arr)
+    return arr
+
+
+def drawCircle(x, y, r, text):
     x1 = x-r
     x2 = x+r
     y1 = y-r
     y2 = y+r
-    canvas.create_oval(x1, y1, x2, y2)
+    canvas.create_oval(
+        x1, y1, x2, y2, outline=node_fill_color, fill=node_fill_color)
+    canvas.create_text(x, y, text=text)
 
 
 def connectLine(x1, y1, x2, y2):
-    canvas.create_line(x1, y1, x2, y2, width=3)
+    canvas.create_line(x1, y1, x2, y2, width=3, fill=node_fill_color)
 
 
-def drawNode(node, y=None, x=None):
-    global radius, height
-
-    if node is not None:
-
-        drawCircle(x, y, radius)
+def setLocOfNodes(root, x, y):
+    if root is not None:
+        root.loc["x"] = x
+        root.loc["y"] = y
         y_next = y + node_verticle_distance + 2*radius
-        x_left = x - 2**(height-node.level-1)*node_horizontal_distance
-        x_right = x + 2**(height-node.level-1)*node_horizontal_distance
-        drawNode(node.left, y_next, x_left)
-        drawNode(node.right, y_next, x_right)
 
-    else:
-        return 1
+        level = root.level + 1
+
+        basePreorder = 2**level
+        positionsForNodes = linspace(0, width_px, basePreorder)
+        if root.left is not None:
+            preorder = root.left.preorder
+            index = preorder - basePreorder
+            x_left = positionsForNodes[index]
+            setLocOfNodes(root.left, x_left, y_next)
+            connectLine(x, y, x_left, y_next)
+
+        if root.right is not None:
+            preorder = root.right.preorder
+            index = preorder - basePreorder
+            x_right = positionsForNodes[index]
+            setLocOfNodes(root.right, x_right, y_next)
+            connectLine(x, y, x_right, y_next)
 
 
-drawNode(root, radius, width_px//2)
+def displayNode(root):
+    if root is not None:
+        drawCircle(root.loc["x"], root.loc["y"], radius, root.data)
+
+        displayNode(root.left)
+        displayNode(root.right)
 
 
+setLocOfNodes(root, width_px/2, radius)
+displayNode(root)
 canvas.mainloop()
